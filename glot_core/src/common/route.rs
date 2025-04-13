@@ -9,6 +9,7 @@ use url::Url;
 pub enum RouteName {
     NotFound,
     Home,
+    Login,
     NewSnippet,
     EditSnippet,
 }
@@ -18,6 +19,7 @@ impl fmt::Display for RouteName {
         match self {
             RouteName::NotFound => write!(f, "NotFound"),
             RouteName::Home => write!(f, "Home"),
+            RouteName::Login => write!(f, "Login"),
             RouteName::NewSnippet => write!(f, "NewSnippet"),
             RouteName::EditSnippet => write!(f, "EditSnippet"),
         }
@@ -29,6 +31,7 @@ pub enum Route {
     NotFound,
     #[default]
     Home,
+    Login,
     NewSnippet(Language),
     EditSnippet(Language, String),
 }
@@ -43,6 +46,7 @@ impl Route {
 
         match parts.as_slice() {
             [""] => Route::Home,
+            ["account", "login"] => Route::Login,
             [language] if is_valid_language(language) => {
                 Route::NewSnippet(language.parse().unwrap())
             }
@@ -57,6 +61,7 @@ impl Route {
         match self {
             Route::NotFound => "/not-found".to_string(),
             Route::Home => "/".to_string(),
+            Route::Login => "/account/login".to_string(),
             Route::NewSnippet(language) => format!("/{}", language.config().id()),
             Route::EditSnippet(language, id) => format!("/{}/{}", language.config().id(), id),
         }
@@ -72,6 +77,7 @@ impl Route {
         match self {
             Route::NotFound => RouteName::NotFound,
             Route::Home => RouteName::Home,
+            Route::Login => RouteName::Login,
             Route::NewSnippet(_) => RouteName::NewSnippet,
             Route::EditSnippet(_, _) => RouteName::EditSnippet,
         }

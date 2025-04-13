@@ -43,6 +43,12 @@ function getPageConfig(route: string, request: any): PageConfig {
                 status: 200,
             }
 
+        case "Login":
+            return {
+                page: glot.loginPage(browserContext),
+                status: 200,
+            }
+
         case "NewSnippet":
             return {
                 page: glot.snippetPage(browserContext),

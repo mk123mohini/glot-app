@@ -1,7 +1,7 @@
-import init, { getRouteName, notFoundPage, homePage, snippetPage } from "../wasm/glot";
+import init, { getRouteName, notFoundPage, homePage, snippetPage, loginPage } from "../wasm/glot";
 import { BrowserWindow, Page, Poly } from "poly";
 import { AceEditorElement } from "poly-ace-editor";
-import { run } from "./api";
+import { run, sendLoginLink } from "./api";
 import { defaultDebugConfig } from "poly/src/logger";
 
 AceEditorElement.register();
@@ -42,6 +42,12 @@ AceEditorElement.register();
                 }
                 break;
 
+            case "sendLoginLink":
+                const loginLinkResponse = await sendLoginLink(msg.config);
+                console.log("login link", loginLinkResponse)
+                poly.sendMessage("GotSendLoginLinkResponse", loginLinkResponse);
+                break;
+
             default:
                 console.warn(`Unhandled app effect: ${msg.type}`);
         }
@@ -64,6 +70,9 @@ function pageFromRoute(route: string): Page {
 
         case "Home":
             return homePage(browserContext)
+
+        case "Login":
+            return loginPage(browserContext)
 
         case "NewSnippet":
             return snippetPage(browserContext)
